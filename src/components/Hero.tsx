@@ -1,8 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Heart } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import heroImage from "@/assets/hero-community.jpg";
 
 const Hero = () => {
+  const navigate = useNavigate();
+
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background with gradient overlay */}
@@ -35,7 +38,11 @@ const Hero = () => {
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
-          <Button size="lg" className="gap-2 shadow-elevated hover:shadow-soft transition-all">
+          <Button 
+            size="lg" 
+            className="gap-2 shadow-elevated hover:shadow-soft transition-all"
+            onClick={() => navigate('/onboarding')}
+          >
             Join the Network
             <ArrowRight className="w-5 h-5" />
           </Button>
