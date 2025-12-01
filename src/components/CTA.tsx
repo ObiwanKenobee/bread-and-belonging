@@ -1,8 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ArrowRight, Mail } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const CTA = () => {
+  const navigate = useNavigate();
+
   return (
     <section className="py-24 bg-gradient-to-br from-primary/10 via-background to-secondary/10">
       <div className="container mx-auto px-4">
@@ -16,7 +19,11 @@ const CTA = () => {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
-            <Button size="lg" className="gap-2 shadow-soft">
+            <Button 
+              size="lg" 
+              className="gap-2 shadow-soft"
+              onClick={() => navigate('/onboarding')}
+            >
               Start Your Journey
               <ArrowRight className="w-5 h-5" />
             </Button>
