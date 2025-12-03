@@ -1,10 +1,12 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Heart } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { ArrowRight, Heart, User } from "lucide-react";
+import { useNavigate, Link } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
 import heroImage from "@/assets/hero-community.jpg";
 
 const Hero = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
@@ -38,17 +40,30 @@ const Hero = () => {
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
-          <Button 
-            size="lg" 
-            className="gap-2 shadow-elevated hover:shadow-soft transition-all"
-            onClick={() => navigate('/onboarding')}
-          >
-            Join the Network
-            <ArrowRight className="w-5 h-5" />
-          </Button>
-          <Button size="lg" variant="outline" className="border-2">
-            Learn How It Works
-          </Button>
+          {user ? (
+            <Button 
+              size="lg" 
+              className="gap-2 shadow-elevated hover:shadow-soft transition-all"
+              onClick={() => navigate('/producer/dashboard')}
+            >
+              <User className="w-5 h-5" />
+              Go to Dashboard
+            </Button>
+          ) : (
+            <>
+              <Button 
+                size="lg" 
+                className="gap-2 shadow-elevated hover:shadow-soft transition-all"
+                onClick={() => navigate('/auth')}
+              >
+                Join the Network
+                <ArrowRight className="w-5 h-5" />
+              </Button>
+              <Button size="lg" variant="outline" className="border-2" onClick={() => navigate('/auth')}>
+                Sign In
+              </Button>
+            </>
+          )}
         </div>
 
         {/* Quick stats */}
