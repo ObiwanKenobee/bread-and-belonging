@@ -14,7 +14,241 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      community_needs: {
+        Row: {
+          category: string
+          created_at: string | null
+          created_by: string | null
+          description: string | null
+          id: string
+          location: string | null
+          matched_product_id: string | null
+          priority: string | null
+          quantity_needed: number | null
+          status: string | null
+          title: string
+          unit: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          category: string
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          location?: string | null
+          matched_product_id?: string | null
+          priority?: string | null
+          quantity_needed?: number | null
+          status?: string | null
+          title: string
+          unit?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          category?: string
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          location?: string | null
+          matched_product_id?: string | null
+          priority?: string | null
+          quantity_needed?: number | null
+          status?: string | null
+          title?: string
+          unit?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "community_needs_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "community_needs_matched_product_id_fkey"
+            columns: ["matched_product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      dignity_credits: {
+        Row: {
+          amount: number
+          created_at: string | null
+          description: string | null
+          id: string
+          related_product_id: string | null
+          source: string | null
+          transaction_type: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          related_product_id?: string | null
+          source?: string | null
+          transaction_type: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          related_product_id?: string | null
+          source?: string | null
+          transaction_type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "dignity_credits_related_product_id_fkey"
+            columns: ["related_product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "dignity_credits_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      inventory: {
+        Row: {
+          available_quantity: number
+          expiry_date: string | null
+          id: string
+          last_updated: string | null
+          location: string | null
+          product_id: string
+          quantity: number
+          reserved_quantity: number
+        }
+        Insert: {
+          available_quantity?: number
+          expiry_date?: string | null
+          id?: string
+          last_updated?: string | null
+          location?: string | null
+          product_id: string
+          quantity?: number
+          reserved_quantity?: number
+        }
+        Update: {
+          available_quantity?: number
+          expiry_date?: string | null
+          id?: string
+          last_updated?: string | null
+          location?: string | null
+          product_id?: string
+          quantity?: number
+          reserved_quantity?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inventory_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      products: {
+        Row: {
+          category: string
+          created_at: string | null
+          description: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          nutritional_info: Json | null
+          price_per_unit: number | null
+          producer_id: string
+          sustainability_score: number | null
+          unit: string
+          updated_at: string | null
+        }
+        Insert: {
+          category: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          nutritional_info?: Json | null
+          price_per_unit?: number | null
+          producer_id: string
+          sustainability_score?: number | null
+          unit: string
+          updated_at?: string | null
+        }
+        Update: {
+          category?: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          nutritional_info?: Json | null
+          price_per_unit?: number | null
+          producer_id?: string
+          sustainability_score?: number | null
+          unit?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "products_producer_id_fkey"
+            columns: ["producer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string | null
+          full_name: string | null
+          id: string
+          location: string | null
+          phone: string | null
+          updated_at: string | null
+          user_type: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          full_name?: string | null
+          id: string
+          location?: string | null
+          phone?: string | null
+          updated_at?: string | null
+          user_type?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          full_name?: string | null
+          id?: string
+          location?: string | null
+          phone?: string | null
+          updated_at?: string | null
+          user_type?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
