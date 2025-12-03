@@ -33,7 +33,7 @@ const Onboarding = () => {
   };
 
   const handleComplete = () => {
-    navigate("/");
+    navigate("/auth");
   };
 
   const canProceed = () => {
