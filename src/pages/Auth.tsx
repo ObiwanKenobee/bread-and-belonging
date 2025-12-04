@@ -19,18 +19,38 @@ export default function Auth() {
   const navigate = useNavigate();
   const { toast } = useToast();
 
+  const redirectToDashboard = async (userId: string) => {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("user_type")
+      .eq("id", userId)
+      .maybeSingle();
+
+    const userType = profile?.user_type || "beneficiary";
+    
+    if (userType === "producer") {
+      navigate("/producer/dashboard");
+    } else if (userType === "partner") {
+      navigate("/producer/dashboard"); // Partners use producer dashboard for now
+    } else {
+      navigate("/beneficiary/dashboard");
+    }
+  };
+
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
-        if (session) {
-          navigate("/producer/dashboard");
+        if (session?.user) {
+          setTimeout(() => {
+            redirectToDashboard(session.user.id);
+          }, 0);
         }
       }
     );
 
     supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) {
-        navigate("/producer/dashboard");
+      if (session?.user) {
+        redirectToDashboard(session.user.id);
       }
     });
 
