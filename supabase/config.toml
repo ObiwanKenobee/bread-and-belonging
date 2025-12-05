@@ -1,1 +1,4 @@
 project_id = "lkpojbavialslstbfswi"
+
+[functions.match-and-multiply]
+verify_jwt = false

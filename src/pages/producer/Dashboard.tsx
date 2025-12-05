@@ -7,7 +7,8 @@ import { ProductsList } from "@/components/producer/ProductsList";
 import { InventoryManager } from "@/components/producer/InventoryManager";
 import { DignityCreditsTracker } from "@/components/producer/DignityCreditsTracker";
 import { CommunityNeeds } from "@/components/producer/CommunityNeeds";
-import { Wheat, LogOut, Package, Boxes, Coins, Heart } from "lucide-react";
+import { MatchAndMultiply } from "@/components/producer/MatchAndMultiply";
+import { Wheat, LogOut, Package, Boxes, Coins, Heart, Sparkles } from "lucide-react";
 
 export default function ProducerDashboard() {
   const { user, loading, signOut } = useAuth();
@@ -57,8 +58,12 @@ export default function ProducerDashboard() {
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
-        <Tabs defaultValue="products" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4 lg:w-auto lg:inline-grid">
+        <Tabs defaultValue="matches" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-5 lg:w-auto lg:inline-grid">
+            <TabsTrigger value="matches" className="gap-2">
+              <Sparkles className="w-4 h-4" />
+              <span className="hidden sm:inline">AI Match</span>
+            </TabsTrigger>
             <TabsTrigger value="products" className="gap-2">
               <Package className="w-4 h-4" />
               <span className="hidden sm:inline">Products</span>
@@ -76,6 +81,10 @@ export default function ProducerDashboard() {
               <span className="hidden sm:inline">Needs</span>
             </TabsTrigger>
           </TabsList>
+
+          <TabsContent value="matches">
+            <MatchAndMultiply />
+          </TabsContent>
 
           <TabsContent value="products">
             <ProductsList userId={user.id} />
