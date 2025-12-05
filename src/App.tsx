@@ -8,6 +8,7 @@ import Onboarding from "./pages/Onboarding";
 import Auth from "./pages/Auth";
 import ProducerDashboard from "./pages/producer/Dashboard";
 import BeneficiaryDashboard from "./pages/beneficiary/Dashboard";
+import PartnerDashboard from "./pages/partner/Dashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -24,6 +25,7 @@ const App = () => (
           <Route path="/auth" element={<Auth />} />
           <Route path="/producer/dashboard" element={<ProducerDashboard />} />
           <Route path="/beneficiary/dashboard" element={<BeneficiaryDashboard />} />
+          <Route path="/partner/dashboard" element={<PartnerDashboard />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

@@ -31,7 +31,7 @@ export default function Auth() {
     if (userType === "producer") {
       navigate("/producer/dashboard");
     } else if (userType === "partner") {
-      navigate("/producer/dashboard"); // Partners use producer dashboard for now
+      navigate("/partner/dashboard");
     } else {
       navigate("/beneficiary/dashboard");
     }
