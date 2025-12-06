@@ -125,6 +125,168 @@ export type Database = {
           },
         ]
       }
+      impact_metrics_daily: {
+        Row: {
+          avg_sustainability_score: number | null
+          created_at: string
+          date: string
+          dignity_credits_issued: number
+          id: string
+          meals_distributed: number
+          needs_fulfilled: number
+          new_community_needs: number
+          people_helped: number
+          products_matched: number
+          successful_matches: number
+          total_match_attempts: number
+          total_quantity_distributed: number
+          updated_at: string
+        }
+        Insert: {
+          avg_sustainability_score?: number | null
+          created_at?: string
+          date: string
+          dignity_credits_issued?: number
+          id?: string
+          meals_distributed?: number
+          needs_fulfilled?: number
+          new_community_needs?: number
+          people_helped?: number
+          products_matched?: number
+          successful_matches?: number
+          total_match_attempts?: number
+          total_quantity_distributed?: number
+          updated_at?: string
+        }
+        Update: {
+          avg_sustainability_score?: number | null
+          created_at?: string
+          date?: string
+          dignity_credits_issued?: number
+          id?: string
+          meals_distributed?: number
+          needs_fulfilled?: number
+          new_community_needs?: number
+          people_helped?: number
+          products_matched?: number
+          successful_matches?: number
+          total_match_attempts?: number
+          total_quantity_distributed?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      impact_metrics_monthly: {
+        Row: {
+          avg_sustainability_score: number | null
+          created_at: string
+          dignity_credits_issued: number
+          id: string
+          meals_distributed: number
+          month: string
+          needs_fulfilled: number
+          new_community_needs: number
+          people_helped: number
+          products_matched: number
+          successful_matches: number
+          top_categories: Json | null
+          top_locations: Json | null
+          total_match_attempts: number
+          total_quantity_distributed: number
+          updated_at: string
+        }
+        Insert: {
+          avg_sustainability_score?: number | null
+          created_at?: string
+          dignity_credits_issued?: number
+          id?: string
+          meals_distributed?: number
+          month: string
+          needs_fulfilled?: number
+          new_community_needs?: number
+          people_helped?: number
+          products_matched?: number
+          successful_matches?: number
+          top_categories?: Json | null
+          top_locations?: Json | null
+          total_match_attempts?: number
+          total_quantity_distributed?: number
+          updated_at?: string
+        }
+        Update: {
+          avg_sustainability_score?: number | null
+          created_at?: string
+          dignity_credits_issued?: number
+          id?: string
+          meals_distributed?: number
+          month?: string
+          needs_fulfilled?: number
+          new_community_needs?: number
+          people_helped?: number
+          products_matched?: number
+          successful_matches?: number
+          top_categories?: Json | null
+          top_locations?: Json | null
+          total_match_attempts?: number
+          total_quantity_distributed?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      impact_metrics_weekly: {
+        Row: {
+          avg_sustainability_score: number | null
+          created_at: string
+          dignity_credits_issued: number
+          id: string
+          meals_distributed: number
+          needs_fulfilled: number
+          new_community_needs: number
+          people_helped: number
+          products_matched: number
+          successful_matches: number
+          total_match_attempts: number
+          total_quantity_distributed: number
+          updated_at: string
+          week_end: string
+          week_start: string
+        }
+        Insert: {
+          avg_sustainability_score?: number | null
+          created_at?: string
+          dignity_credits_issued?: number
+          id?: string
+          meals_distributed?: number
+          needs_fulfilled?: number
+          new_community_needs?: number
+          people_helped?: number
+          products_matched?: number
+          successful_matches?: number
+          total_match_attempts?: number
+          total_quantity_distributed?: number
+          updated_at?: string
+          week_end: string
+          week_start: string
+        }
+        Update: {
+          avg_sustainability_score?: number | null
+          created_at?: string
+          dignity_credits_issued?: number
+          id?: string
+          meals_distributed?: number
+          needs_fulfilled?: number
+          new_community_needs?: number
+          people_helped?: number
+          products_matched?: number
+          successful_matches?: number
+          total_match_attempts?: number
+          total_quantity_distributed?: number
+          updated_at?: string
+          week_end?: string
+          week_start?: string
+        }
+        Relationships: []
+      }
       inventory: {
         Row: {
           available_quantity: number
