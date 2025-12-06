@@ -11,8 +11,9 @@ import {
 } from "recharts";
 import { 
   Building2, LogOut, Users, Utensils, Leaf, TrendingUp, 
-  Package, Heart, ArrowUpRight, ArrowDownRight 
+  Package, Heart, ArrowUpRight, ArrowDownRight, RefreshCw 
 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 // Mock data for charts - in production, this would come from aggregated database queries
 const monthlyImpactData = [
@@ -79,6 +80,8 @@ function StatCard({ title, value, change, icon, description }: StatCardProps) {
 export default function PartnerDashboard() {
   const { user, loading, signOut } = useAuth();
   const navigate = useNavigate();
+  const { toast } = useToast();
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [stats, setStats] = useState({
     totalMeals: 0,
     peopleHelped: 0,
@@ -141,6 +144,36 @@ export default function PartnerDashboard() {
     }
   };
 
+  const handleRefreshMetrics = async () => {
+    setIsRefreshing(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("aggregate-metrics", {
+        body: {},
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      toast({
+        title: "Metrics Refreshed",
+        description: "Impact metrics have been recalculated successfully.",
+      });
+
+      // Refresh the stats display
+      await fetchStats();
+    } catch (error) {
+      console.error("Error refreshing metrics:", error);
+      toast({
+        title: "Refresh Failed",
+        description: "Failed to refresh metrics. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -166,6 +199,15 @@ export default function PartnerDashboard() {
             </div>
           </div>
           <div className="flex items-center gap-2">
+            <Button 
+              variant="outline" 
+              onClick={handleRefreshMetrics} 
+              size="sm"
+              disabled={isRefreshing}
+            >
+              <RefreshCw className={`w-4 h-4 mr-2 ${isRefreshing ? "animate-spin" : ""}`} />
+              {isRefreshing ? "Refreshing..." : "Refresh Metrics"}
+            </Button>
             <Button variant="ghost" onClick={() => navigate("/")} size="sm">
               Home
             </Button>
