@@ -328,6 +328,61 @@ export type Database = {
           },
         ]
       }
+      match_fulfillments: {
+        Row: {
+          community_need_id: string
+          created_at: string
+          fulfilled_at: string
+          id: string
+          notes: string | null
+          producer_id: string
+          product_id: string
+          quantity_fulfilled: number
+        }
+        Insert: {
+          community_need_id: string
+          created_at?: string
+          fulfilled_at?: string
+          id?: string
+          notes?: string | null
+          producer_id: string
+          product_id: string
+          quantity_fulfilled: number
+        }
+        Update: {
+          community_need_id?: string
+          created_at?: string
+          fulfilled_at?: string
+          id?: string
+          notes?: string | null
+          producer_id?: string
+          product_id?: string
+          quantity_fulfilled?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "match_fulfillments_community_need_id_fkey"
+            columns: ["community_need_id"]
+            isOneToOne: false
+            referencedRelation: "community_needs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "match_fulfillments_producer_id_fkey"
+            columns: ["producer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "match_fulfillments_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       products: {
         Row: {
           category: string
