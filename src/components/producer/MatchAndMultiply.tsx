@@ -5,11 +5,13 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { Sparkles, MapPin, Calendar, Leaf, Users, ArrowRight, RefreshCw, Loader2 } from "lucide-react";
+import { FulfillmentDialog } from "./FulfillmentDialog";
+import { Sparkles, MapPin, Calendar, Leaf, Users, ArrowRight, RefreshCw, Loader2, CheckCircle } from "lucide-react";
 
 interface Match {
   need_id: string;
   inventory_id: string;
+  product_id?: string;
   product_name: string;
   match_score: number;
   reasoning: string;
@@ -37,6 +39,8 @@ export function MatchAndMultiply() {
   const [matches, setMatches] = useState<Match[]>([]);
   const [loading, setLoading] = useState(false);
   const [stats, setStats] = useState<{ needs: number; inventory: number } | null>(null);
+  const [selectedMatch, setSelectedMatch] = useState<Match | null>(null);
+  const [fulfillmentDialogOpen, setFulfillmentDialogOpen] = useState(false);
   const { toast } = useToast();
 
   const fetchMatches = async () => {
@@ -107,34 +111,17 @@ export function MatchAndMultiply() {
     return "text-orange-600";
   };
 
-  const handleAcceptMatch = async (match: Match) => {
-    try {
-      // Update the community need to mark it as matched
-      const { error } = await supabase
-        .from("community_needs")
-        .update({
-          status: "matched",
-          matched_product_id: match.inventory_id,
-        })
-        .eq("id", match.need_id);
+  const handleFulfillClick = (match: Match) => {
+    setSelectedMatch(match);
+    setFulfillmentDialogOpen(true);
+  };
 
-      if (error) throw error;
-
-      toast({
-        title: "Match Accepted",
-        description: `You've committed to fulfilling "${match.need_title}"`,
-      });
-
-      // Remove the accepted match from the list
-      setMatches((prev) => prev.filter((m) => m.need_id !== match.need_id));
-    } catch (error) {
-      console.error("Error accepting match:", error);
-      toast({
-        title: "Error",
-        description: "Failed to accept match. Please try again.",
-        variant: "destructive",
-      });
+  const handleFulfillmentSuccess = () => {
+    // Remove the fulfilled match from the list
+    if (selectedMatch) {
+      setMatches((prev) => prev.filter((m) => m.need_id !== selectedMatch.need_id));
     }
+    setSelectedMatch(null);
   };
 
   return (
@@ -269,8 +256,9 @@ export function MatchAndMultiply() {
                       <Progress value={match.match_score} className="h-2" />
                     </div>
 
-                    <Button onClick={() => handleAcceptMatch(match)} className="shrink-0">
-                      Accept Match
+                    <Button onClick={() => handleFulfillClick(match)} className="shrink-0">
+                      <CheckCircle className="mr-2 h-4 w-4" />
+                      Fulfill Match
                     </Button>
                   </div>
                 </div>
@@ -279,6 +267,13 @@ export function MatchAndMultiply() {
           ))}
         </div>
       )}
+
+      <FulfillmentDialog
+        open={fulfillmentDialogOpen}
+        onOpenChange={setFulfillmentDialogOpen}
+        match={selectedMatch}
+        onSuccess={handleFulfillmentSuccess}
+      />
     </div>
   );
 }

@@ -186,6 +186,7 @@ Suggest up to 10 optimal matches, prioritizing high-priority needs and best cate
       
       return {
         ...match,
+        product_id: inv?.products?.id,
         need_title: need?.title,
         need_priority: need?.priority,
         need_location: need?.location,

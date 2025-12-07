@@ -5,3 +5,6 @@ verify_jwt = false
 
 [functions.aggregate-metrics]
 verify_jwt = false
+
+[functions.fulfill-match]
+verify_jwt = false
