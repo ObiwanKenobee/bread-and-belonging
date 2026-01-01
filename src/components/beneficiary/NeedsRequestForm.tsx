@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { Plus, Clock, CheckCircle, XCircle } from "lucide-react";
+import { communityNeedSchema, type CommunityNeedFormData } from "@/lib/validations";
 
 interface NeedRequest {
   id: string;
@@ -22,14 +23,15 @@ interface NeedRequest {
   created_at: string | null;
 }
 
-const CATEGORIES = ["vegetables", "fruits", "dairy", "grains", "protein", "bread", "eggs", "other"];
-const PRIORITIES = ["low", "medium", "high", "urgent"];
+const CATEGORIES = ["vegetables", "fruits", "dairy", "grains", "protein", "bread", "eggs", "other"] as const;
+const PRIORITIES = ["low", "medium", "high", "urgent"] as const;
 
 export function NeedsRequestForm({ userId }: { userId: string }) {
   const [requests, setRequests] = useState<NeedRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [showForm, setShowForm] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const { toast } = useToast();
 
   const [formData, setFormData] = useState({
@@ -63,16 +65,39 @@ export function NeedsRequestForm({ userId }: { userId: string }) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setErrors({});
+
+    // Prepare data for validation
+    const dataToValidate: CommunityNeedFormData = {
+      title: formData.title,
+      description: formData.description || null,
+      category: formData.category as CommunityNeedFormData["category"],
+      quantity_needed: formData.quantity_needed ? parseFloat(formData.quantity_needed) : null,
+      unit: formData.unit || null,
+      priority: (formData.priority || "medium") as CommunityNeedFormData["priority"],
+      location: formData.location || null,
+    };
+
+    const validation = communityNeedSchema.safeParse(dataToValidate);
+    if (!validation.success) {
+      const fieldErrors: Record<string, string> = {};
+      validation.error.errors.forEach((err) => {
+        if (err.path[0]) fieldErrors[err.path[0].toString()] = err.message;
+      });
+      setErrors(fieldErrors);
+      return;
+    }
+
     setSubmitting(true);
 
     const { error } = await supabase.from("community_needs").insert({
-      title: formData.title,
-      description: formData.description || null,
-      category: formData.category,
-      quantity_needed: formData.quantity_needed ? parseFloat(formData.quantity_needed) : null,
-      unit: formData.unit || null,
-      priority: formData.priority,
-      location: formData.location || null,
+      title: validation.data.title,
+      description: validation.data.description,
+      category: validation.data.category,
+      quantity_needed: validation.data.quantity_needed,
+      unit: validation.data.unit,
+      priority: validation.data.priority,
+      location: validation.data.location,
       created_by: userId,
       status: "open",
     });
@@ -158,17 +183,17 @@ export function NeedsRequestForm({ userId }: { userId: string }) {
                     value={formData.title}
                     onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                     placeholder="e.g., Fresh vegetables for family"
-                    required
+                    className={errors.title ? "border-destructive" : ""}
                   />
+                  {errors.title && <p className="text-sm text-destructive">{errors.title}</p>}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="category">Category *</Label>
                   <Select
                     value={formData.category}
                     onValueChange={(value) => setFormData({ ...formData, category: value })}
-                    required
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className={errors.category ? "border-destructive" : ""}>
                       <SelectValue placeholder="Select category" />
                     </SelectTrigger>
                     <SelectContent>
@@ -179,6 +204,7 @@ export function NeedsRequestForm({ userId }: { userId: string }) {
                       ))}
                     </SelectContent>
                   </Select>
+                  {errors.category && <p className="text-sm text-destructive">{errors.category}</p>}
                 </div>
               </div>
 
@@ -190,7 +216,9 @@ export function NeedsRequestForm({ userId }: { userId: string }) {
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   placeholder="Provide more details about your need..."
                   rows={3}
+                  className={errors.description ? "border-destructive" : ""}
                 />
+                {errors.description && <p className="text-sm text-destructive">{errors.description}</p>}
               </div>
 
               <div className="grid gap-4 sm:grid-cols-3">
@@ -202,7 +230,9 @@ export function NeedsRequestForm({ userId }: { userId: string }) {
                     value={formData.quantity_needed}
                     onChange={(e) => setFormData({ ...formData, quantity_needed: e.target.value })}
                     placeholder="e.g., 5"
+                    className={errors.quantity_needed ? "border-destructive" : ""}
                   />
+                  {errors.quantity_needed && <p className="text-sm text-destructive">{errors.quantity_needed}</p>}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="unit">Unit</Label>
@@ -211,7 +241,9 @@ export function NeedsRequestForm({ userId }: { userId: string }) {
                     value={formData.unit}
                     onChange={(e) => setFormData({ ...formData, unit: e.target.value })}
                     placeholder="e.g., kg, bags"
+                    className={errors.unit ? "border-destructive" : ""}
                   />
+                  {errors.unit && <p className="text-sm text-destructive">{errors.unit}</p>}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="priority">Priority</Label>
@@ -240,11 +272,13 @@ export function NeedsRequestForm({ userId }: { userId: string }) {
                   value={formData.location}
                   onChange={(e) => setFormData({ ...formData, location: e.target.value })}
                   placeholder="e.g., Downtown Community Center"
+                  className={errors.location ? "border-destructive" : ""}
                 />
+                {errors.location && <p className="text-sm text-destructive">{errors.location}</p>}
               </div>
 
               <div className="flex gap-2 pt-2">
-                <Button type="submit" disabled={submitting || !formData.title || !formData.category}>
+                <Button type="submit" disabled={submitting}>
                   {submitting ? "Submitting..." : "Submit Request"}
                 </Button>
                 <Button type="button" variant="outline" onClick={() => setShowForm(false)}>

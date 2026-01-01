@@ -1,10 +1,10 @@
 project_id = "lkpojbavialslstbfswi"
 
 [functions.match-and-multiply]
-verify_jwt = false
+verify_jwt = true
 
 [functions.aggregate-metrics]
-verify_jwt = false
+verify_jwt = true
 
 [functions.fulfill-match]
 verify_jwt = false

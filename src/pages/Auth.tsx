@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { Wheat, Loader2 } from "lucide-react";
+import { signInSchema, signUpSchema } from "@/lib/validations";
 
 export default function Auth() {
   const [email, setEmail] = useState("");
@@ -16,6 +17,7 @@ export default function Auth() {
   const [fullName, setFullName] = useState("");
   const [userType, setUserType] = useState<string>("producer");
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -59,11 +61,23 @@ export default function Auth() {
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
+    setErrors({});
+    
+    const validation = signInSchema.safeParse({ email, password });
+    if (!validation.success) {
+      const fieldErrors: Record<string, string> = {};
+      validation.error.errors.forEach((err) => {
+        if (err.path[0]) fieldErrors[err.path[0].toString()] = err.message;
+      });
+      setErrors(fieldErrors);
+      return;
+    }
+
     setLoading(true);
     
     const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
+      email: validation.data.email,
+      password: validation.data.password,
     });
 
     if (error) {
@@ -78,18 +92,30 @@ export default function Auth() {
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
+    setErrors({});
+
+    const validation = signUpSchema.safeParse({ email, password, fullName, userType });
+    if (!validation.success) {
+      const fieldErrors: Record<string, string> = {};
+      validation.error.errors.forEach((err) => {
+        if (err.path[0]) fieldErrors[err.path[0].toString()] = err.message;
+      });
+      setErrors(fieldErrors);
+      return;
+    }
+
     setLoading(true);
 
     const redirectUrl = `${window.location.origin}/`;
 
     const { error } = await supabase.auth.signUp({
-      email,
-      password,
+      email: validation.data.email,
+      password: validation.data.password,
       options: {
         emailRedirectTo: redirectUrl,
         data: {
-          full_name: fullName,
-          user_type: userType,
+          full_name: validation.data.fullName,
+          user_type: validation.data.userType,
         },
       },
     });
@@ -138,8 +164,9 @@ export default function Auth() {
                     placeholder="you@example.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    required
+                    className={errors.email ? "border-destructive" : ""}
                   />
+                  {errors.email && <p className="text-sm text-destructive">{errors.email}</p>}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="signin-password">Password</Label>
@@ -149,8 +176,9 @@ export default function Auth() {
                     placeholder="••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    required
+                    className={errors.password ? "border-destructive" : ""}
                   />
+                  {errors.password && <p className="text-sm text-destructive">{errors.password}</p>}
                 </div>
                 <Button type="submit" className="w-full" disabled={loading}>
                   {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
@@ -169,8 +197,9 @@ export default function Auth() {
                     placeholder="Your name"
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
-                    required
+                    className={errors.fullName ? "border-destructive" : ""}
                   />
+                  {errors.fullName && <p className="text-sm text-destructive">{errors.fullName}</p>}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="signup-email">Email</Label>
@@ -180,8 +209,9 @@ export default function Auth() {
                     placeholder="you@example.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    required
+                    className={errors.email ? "border-destructive" : ""}
                   />
+                  {errors.email && <p className="text-sm text-destructive">{errors.email}</p>}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="signup-password">Password</Label>
@@ -191,14 +221,14 @@ export default function Auth() {
                     placeholder="••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    required
-                    minLength={6}
+                    className={errors.password ? "border-destructive" : ""}
                   />
+                  {errors.password && <p className="text-sm text-destructive">{errors.password}</p>}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="user-type">I am a</Label>
                   <Select value={userType} onValueChange={setUserType}>
-                    <SelectTrigger>
+                    <SelectTrigger className={errors.userType ? "border-destructive" : ""}>
                       <SelectValue placeholder="Select your role" />
                     </SelectTrigger>
                     <SelectContent>
@@ -207,6 +237,7 @@ export default function Auth() {
                       <SelectItem value="partner">Impact Partner</SelectItem>
                     </SelectContent>
                   </Select>
+                  {errors.userType && <p className="text-sm text-destructive">{errors.userType}</p>}
                 </div>
                 <Button type="submit" className="w-full" disabled={loading}>
                   {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
