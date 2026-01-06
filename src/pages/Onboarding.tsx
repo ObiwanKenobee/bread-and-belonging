@@ -33,7 +33,8 @@ const Onboarding = () => {
   };
 
   const handleComplete = () => {
-    navigate("/auth");
+    // Pass userType to auth page so it's pre-selected
+    navigate(`/auth?type=${userType}`);
   };
 
   const canProceed = () => {

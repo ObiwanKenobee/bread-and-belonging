@@ -1,12 +1,35 @@
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Heart, User } from "lucide-react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 import heroImage from "@/assets/hero-community.jpg";
 
 const Hero = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const [dashboardPath, setDashboardPath] = useState("/beneficiary/dashboard");
+
+  useEffect(() => {
+    if (user) {
+      supabase
+        .from("profiles")
+        .select("user_type")
+        .eq("id", user.id)
+        .maybeSingle()
+        .then(({ data }) => {
+          const userType = data?.user_type || "beneficiary";
+          if (userType === "producer") {
+            setDashboardPath("/producer/dashboard");
+          } else if (userType === "partner") {
+            setDashboardPath("/partner/dashboard");
+          } else {
+            setDashboardPath("/beneficiary/dashboard");
+          }
+        });
+    }
+  }, [user]);
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
@@ -44,7 +67,7 @@ const Hero = () => {
             <Button 
               size="lg" 
               className="gap-2 shadow-elevated hover:shadow-soft transition-all"
-              onClick={() => navigate('/producer/dashboard')}
+              onClick={() => navigate(dashboardPath)}
             >
               <User className="w-5 h-5" />
               Go to Dashboard
@@ -54,7 +77,7 @@ const Hero = () => {
               <Button 
                 size="lg" 
                 className="gap-2 shadow-elevated hover:shadow-soft transition-all"
-                onClick={() => navigate('/auth')}
+                onClick={() => navigate('/onboarding')}
               >
                 Join the Network
                 <ArrowRight className="w-5 h-5" />

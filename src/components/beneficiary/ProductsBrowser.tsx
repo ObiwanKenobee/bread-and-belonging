@@ -3,8 +3,14 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Leaf, Search, Package } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
+import { Leaf, Search, Package, ShoppingCart, MapPin } from "lucide-react";
 
 interface Product {
   id: string;
@@ -30,6 +36,13 @@ export function ProductsBrowser() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
+  const [requestDialogOpen, setRequestDialogOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<InventoryWithProduct | null>(null);
+  const [requestQuantity, setRequestQuantity] = useState("");
+  const [requestNote, setRequestNote] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const { toast } = useToast();
+  const { user } = useAuth();
 
   useEffect(() => {
     fetchAvailableProducts();
@@ -88,6 +101,56 @@ export function ProductsBrowser() {
     return colors[category.toLowerCase()] || "bg-muted text-muted-foreground";
   };
 
+  const handleRequestClick = (item: InventoryWithProduct) => {
+    setSelectedItem(item);
+    setRequestQuantity("1");
+    setRequestNote("");
+    setRequestDialogOpen(true);
+  };
+
+  const handleSubmitRequest = async () => {
+    if (!selectedItem || !user) return;
+
+    const qty = parseFloat(requestQuantity);
+    if (isNaN(qty) || qty <= 0) {
+      toast({
+        title: "Invalid quantity",
+        description: "Please enter a valid quantity.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setSubmitting(true);
+
+    const { error } = await supabase.from("community_needs").insert({
+      title: `Request for ${selectedItem.product.name}`,
+      description: requestNote || `Requesting ${qty} ${selectedItem.product.unit} of ${selectedItem.product.name}`,
+      category: selectedItem.product.category.toLowerCase(),
+      quantity_needed: qty,
+      unit: selectedItem.product.unit,
+      priority: "medium",
+      location: selectedItem.location,
+      created_by: user.id,
+      status: "open",
+    });
+
+    if (error) {
+      toast({
+        title: "Error",
+        description: "Failed to submit request. Please try again.",
+        variant: "destructive",
+      });
+    } else {
+      toast({
+        title: "Request Submitted!",
+        description: `Your request for ${selectedItem.product.name} has been posted to the community.`,
+      });
+      setRequestDialogOpen(false);
+    }
+    setSubmitting(false);
+  };
+
   if (loading) {
     return <p className="text-muted-foreground">Loading available products...</p>;
   }
@@ -96,7 +159,7 @@ export function ProductsBrowser() {
     <div className="space-y-6">
       <div>
         <h2 className="text-xl font-semibold text-foreground">Available Products</h2>
-        <p className="text-muted-foreground">Browse products available in your community</p>
+        <p className="text-muted-foreground">Browse products available in your community and request what you need</p>
       </div>
 
       <div className="flex flex-col sm:flex-row gap-4">
@@ -155,7 +218,10 @@ export function ProductsBrowser() {
                 {item.location && (
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Location:</span>
-                    <span className="text-foreground">{item.location}</span>
+                    <span className="text-foreground flex items-center gap-1">
+                      <MapPin className="w-3 h-3" />
+                      {item.location}
+                    </span>
                   </div>
                 )}
 
@@ -176,11 +242,64 @@ export function ProductsBrowser() {
                     </span>
                   </div>
                 )}
+
+                <Button 
+                  className="w-full mt-3" 
+                  variant="secondary"
+                  onClick={() => handleRequestClick(item)}
+                >
+                  <ShoppingCart className="w-4 h-4 mr-2" />
+                  Request This
+                </Button>
               </CardContent>
             </Card>
           ))}
         </div>
       )}
+
+      {/* Request Dialog */}
+      <Dialog open={requestDialogOpen} onOpenChange={setRequestDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Request {selectedItem?.product.name}</DialogTitle>
+            <DialogDescription>
+              Submit a request to the community for this product.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label>Quantity ({selectedItem?.product.unit})</Label>
+              <Input
+                type="number"
+                min="1"
+                max={selectedItem?.available_quantity}
+                value={requestQuantity}
+                onChange={(e) => setRequestQuantity(e.target.value)}
+              />
+              <p className="text-xs text-muted-foreground">
+                Up to {selectedItem?.available_quantity} {selectedItem?.product.unit} available
+              </p>
+            </div>
+            <div className="space-y-2">
+              <Label>Note (optional)</Label>
+              <Textarea
+                placeholder="Add any details about your request..."
+                value={requestNote}
+                onChange={(e) => setRequestNote(e.target.value)}
+                rows={3}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setRequestDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleSubmitRequest} disabled={submitting}>
+              {submitting ? "Submitting..." : "Submit Request"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

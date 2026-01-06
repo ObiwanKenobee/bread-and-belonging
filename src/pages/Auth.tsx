@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,12 +13,16 @@ import { signInSchema, signUpSchema } from "@/lib/validations";
 import { PasswordStrengthIndicator } from "@/components/auth/PasswordStrengthIndicator";
 
 export default function Auth() {
+  const [searchParams] = useSearchParams();
+  const typeFromUrl = searchParams.get("type");
+  
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
-  const [userType, setUserType] = useState<string>("producer");
+  const [userType, setUserType] = useState<string>(typeFromUrl || "beneficiary");
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [activeTab, setActiveTab] = useState(typeFromUrl ? "signup" : "signin");
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -149,7 +153,7 @@ export default function Auth() {
           <CardDescription>Join the community-owned platform</CardDescription>
         </CardHeader>
         <CardContent>
-          <Tabs defaultValue="signin">
+          <Tabs value={activeTab} onValueChange={setActiveTab}>
             <TabsList className="grid w-full grid-cols-2 mb-6">
               <TabsTrigger value="signin">Sign In</TabsTrigger>
               <TabsTrigger value="signup">Sign Up</TabsTrigger>
