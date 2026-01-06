@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 import { Wheat, Loader2 } from "lucide-react";
 import { signInSchema, signUpSchema } from "@/lib/validations";
+import { PasswordStrengthIndicator } from "@/components/auth/PasswordStrengthIndicator";
 
 export default function Auth() {
   const [email, setEmail] = useState("");
@@ -223,6 +224,7 @@ export default function Auth() {
                     onChange={(e) => setPassword(e.target.value)}
                     className={errors.password ? "border-destructive" : ""}
                   />
+                  <PasswordStrengthIndicator password={password} />
                   {errors.password && <p className="text-sm text-destructive">{errors.password}</p>}
                 </div>
                 <div className="space-y-2">
