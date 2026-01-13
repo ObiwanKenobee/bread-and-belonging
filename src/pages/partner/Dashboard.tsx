@@ -14,6 +14,8 @@ import {
   Package, Heart, ArrowUpRight, ArrowDownRight, RefreshCw 
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { WelcomeTour } from "@/components/tour/WelcomeTour";
+import { NotificationBell } from "@/components/notifications/NotificationBell";
 
 // Mock data for charts - in production, this would come from aggregated database queries
 const monthlyImpactData = [
@@ -186,6 +188,7 @@ export default function PartnerDashboard() {
 
   return (
     <div className="min-h-screen bg-background">
+      <WelcomeTour userType="partner" userId={user.id} />
       {/* Header */}
       <header className="border-b bg-card">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
@@ -199,6 +202,7 @@ export default function PartnerDashboard() {
             </div>
           </div>
           <div className="flex items-center gap-2">
+            <NotificationBell userId={user.id} />
             <Button 
               variant="outline" 
               onClick={handleRefreshMetrics} 

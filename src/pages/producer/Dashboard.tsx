@@ -9,6 +9,8 @@ import { DignityCreditsTracker } from "@/components/producer/DignityCreditsTrack
 import { CommunityNeeds } from "@/components/producer/CommunityNeeds";
 import { MatchAndMultiply } from "@/components/producer/MatchAndMultiply";
 import { FulfillmentHistory } from "@/components/producer/FulfillmentHistory";
+import { WelcomeTour } from "@/components/tour/WelcomeTour";
+import { NotificationBell } from "@/components/notifications/NotificationBell";
 import { Wheat, LogOut, Package, Boxes, Coins, Heart, Sparkles, History } from "lucide-react";
 
 export default function ProducerDashboard() {
@@ -33,6 +35,7 @@ export default function ProducerDashboard() {
 
   return (
     <div className="min-h-screen bg-background">
+      <WelcomeTour userType="producer" userId={user.id} />
       {/* Header */}
       <header className="border-b bg-card">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
@@ -46,6 +49,7 @@ export default function ProducerDashboard() {
             </div>
           </div>
           <div className="flex items-center gap-2">
+            <NotificationBell userId={user.id} />
             <Button variant="ghost" onClick={() => navigate("/")} size="sm">
               Home
             </Button>

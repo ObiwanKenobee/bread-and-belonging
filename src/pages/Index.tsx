@@ -4,6 +4,7 @@ import UserTypes from "@/components/UserTypes";
 import Impact from "@/components/Impact";
 import Governance from "@/components/Governance";
 import CTA from "@/components/CTA";
+import { CommunityFeed } from "@/components/community/CommunityFeed";
 
 const Index = () => {
   return (
@@ -11,6 +12,7 @@ const Index = () => {
       <Hero />
       <HowItWorks />
       <UserTypes />
+      <CommunityFeed />
       <Impact />
       <Governance />
       <CTA />

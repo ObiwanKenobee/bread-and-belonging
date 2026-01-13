@@ -383,6 +383,77 @@ export type Database = {
           },
         ]
       }
+      notifications: {
+        Row: {
+          created_at: string
+          id: string
+          message: string
+          metadata: Json | null
+          read: boolean
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          message: string
+          metadata?: Json | null
+          read?: boolean
+          title: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          message?: string
+          metadata?: Json | null
+          read?: boolean
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      producer_ratings: {
+        Row: {
+          beneficiary_id: string
+          created_at: string
+          fulfillment_id: string | null
+          id: string
+          producer_id: string
+          rating: number
+          thank_you_message: string | null
+        }
+        Insert: {
+          beneficiary_id: string
+          created_at?: string
+          fulfillment_id?: string | null
+          id?: string
+          producer_id: string
+          rating: number
+          thank_you_message?: string | null
+        }
+        Update: {
+          beneficiary_id?: string
+          created_at?: string
+          fulfillment_id?: string | null
+          id?: string
+          producer_id?: string
+          rating?: number
+          thank_you_message?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "producer_ratings_fulfillment_id_fkey"
+            columns: ["fulfillment_id"]
+            isOneToOne: false
+            referencedRelation: "match_fulfillments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       products: {
         Row: {
           category: string
@@ -486,6 +557,30 @@ export type Database = {
           assigned_by?: string | null
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_tour_status: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          id: string
+          tour_completed: boolean
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          tour_completed?: boolean
+          user_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          tour_completed?: boolean
           user_id?: string
         }
         Relationships: []
