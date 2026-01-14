@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Check, Heart, TrendingUp, Building2, Users, Sparkles, Target, Leaf } from "lucide-react";
 import { Link } from "react-router-dom";
+import { EnterpriseContactForm } from "./pricing/EnterpriseContactForm";
 
 const partnerTiers = [
   {
@@ -151,16 +152,26 @@ const Pricing = () => {
                   ))}
                 </ul>
                 
-                <Button 
-                  asChild
-                  className={`w-full ${
-                    tier.highlighted 
-                      ? 'bg-primary hover:bg-primary/90' 
-                      : 'bg-muted hover:bg-muted/80 text-foreground'
-                  }`}
-                >
-                  <Link to="/onboarding">{tier.cta}</Link>
-                </Button>
+                {tier.name === "Enterprise" ? (
+                  <EnterpriseContactForm
+                    trigger={
+                      <Button className="w-full bg-muted hover:bg-muted/80 text-foreground">
+                        {tier.cta}
+                      </Button>
+                    }
+                  />
+                ) : (
+                  <Button 
+                    asChild
+                    className={`w-full ${
+                      tier.highlighted 
+                        ? 'bg-primary hover:bg-primary/90' 
+                        : 'bg-muted hover:bg-muted/80 text-foreground'
+                    }`}
+                  >
+                    <Link to="/onboarding">{tier.cta}</Link>
+                  </Button>
+                )}
               </Card>
             );
           })}
