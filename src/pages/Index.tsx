@@ -6,6 +6,7 @@ import Governance from "@/components/Governance";
 import CTA from "@/components/CTA";
 import Pricing from "@/components/Pricing";
 import { CommunityFeed } from "@/components/community/CommunityFeed";
+import { PricingFAQ } from "@/components/pricing/PricingFAQ";
 
 const Index = () => {
   return (
@@ -15,6 +16,7 @@ const Index = () => {
       <UserTypes />
       <CommunityFeed />
       <Pricing />
+      <PricingFAQ />
       <Impact />
       <Governance />
       <CTA />
