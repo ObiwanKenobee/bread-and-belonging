@@ -5,6 +5,7 @@ import Impact from "@/components/Impact";
 import Governance from "@/components/Governance";
 import CTA from "@/components/CTA";
 import Pricing from "@/components/Pricing";
+import Testimonials from "@/components/Testimonials";
 import { CommunityFeed } from "@/components/community/CommunityFeed";
 import { PricingFAQ } from "@/components/pricing/PricingFAQ";
 
@@ -15,6 +16,7 @@ const Index = () => {
       <HowItWorks />
       <UserTypes />
       <CommunityFeed />
+      <Testimonials />
       <Pricing />
       <PricingFAQ />
       <Impact />
