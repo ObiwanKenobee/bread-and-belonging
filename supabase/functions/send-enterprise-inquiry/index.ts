@@ -1,6 +1,7 @@
-import { Resend } from "https://esm.sh/resend@4.0.0";
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { Resend } from "https://esm.sh/resend@2.0.0";
 
-const resend = new Resend(Deno.env.get("RESEND_API_KEY") as string);
+const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -34,7 +35,7 @@ const userRangeLabels: Record<string, string> = {
   "100000+": "50,000+",
 };
 
-Deno.serve(async (req) => {
+serve(async (req) => {
   // Handle CORS preflight
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -134,7 +135,7 @@ Deno.serve(async (req) => {
     const { error: sendError } = await resend.emails.send({
       from: "Loaves & Fish Network <onboarding@resend.dev>",
       to: ["hello@loavesandfish.network"], // Replace with actual email
-      replyTo: inquiry.email,
+      reply_to: inquiry.email,
       subject: `Enterprise Inquiry: ${inquiry.organization}`,
       html,
     });
